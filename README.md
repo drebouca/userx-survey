@@ -11,8 +11,8 @@ In order to evaluate the system features, students were assigned to either a tre
 Among a number of surveys, a User Experience was developed and assigned to each student asking about their satisfaction with the system navigation, usability, and reliability, and their perception of the content relevance and motivation for learning. All items were given on a 5-point scale from "Strongly Disagree" to "Strongly Agree". A summary of the items is given below:
 
 | Domain | \# | Item |
-|----|----------------------------------------------------------------------------|
-|**System Usability** |  1  | "I feel confident using the   system."                                     |
+|----|----------------------------------------------------------------------------|---|
+|*System Usability* |  1  | "I feel confident using the   system."                                     |
 | | 2  | "I feel confident navigating through the assignments."                     |
 | | 3  | "I feel confident interpreting reports."                                   |
 |  | 4  | "I am satisfied with using the system as an assisted learning   tool."     |
@@ -22,7 +22,7 @@ Among a number of surveys, a User Experience was developed and assigned to each 
 || 13 |            "I am satisfied   with the speed of the system."                |
 || 14 |            "I frequently run   into technical problems in the system (R)." |
 | | 16 |            "I find the system   easy to use."                              |
-| **Learning**|   7  |            "I am satisfied   with scaffolding solutions."                  |
+| *Learning*|   7  |            "I am satisfied   with scaffolding solutions."                  |
 | | 8  |            "The assignments   are very relevant to our curriculum."        |
 || 9  |            "The FAQ is   useful."                                          |
 || 10 |            "The scaffolding   solutions are useful."                       |
