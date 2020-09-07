@@ -32,7 +32,13 @@ Among a number of surveys, a User Experience was developed and assigned to each 
 || 18 |            "I believe the   system improves testing performance."          |
 || 19 |            "I believe the   system promotes learning motivation."          |
 
-## 
+## Data Pre-processing
+
+A total of 235 students were given the userx survey. Of the total, 36 students did not answer the survey, and 19 were removed due to unreliable responses (long string of the same answer category). After removal of the data, a sample of $N=180$ students were used for these analyses. 
+
+Finally, the data was changed from numerical (1,2,3,4,5) to categorical values ("Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"). One reverse-coded item was present, but kept at the original scale for the purposes data visualization.
+
+
 
 ## 1. Are students in the treatment group satisfied with the system?
 

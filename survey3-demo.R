@@ -1,46 +1,42 @@
-library(tidyverse)
-library(car)
+#######################################
+### Script to select data from UX
+### survey and generate figures to
+### visualize results.
+###
+### by Dani Reboucas
+#######################################
 
-
-## example case
-set.seed(1)
-n=100
-fdaff_likert <- data.frame(
-    country=factor(sample(1:3, n, replace=T), labels=c("US","Mexico","Canada")),
-    item1=factor(sample(1:5,n, replace=T), labels=c("Very Poor","Poor","Neither","Good","Very Good")),
-    item2=factor(sample(1:5,n, replace=T), labels=c("Very Poor","Poor","Neither","Good","Very Good")),
-    item3=factor(sample(1:5,n, replace=T), labels=c("Very Poor","Poor","Neither","Good","Very Good"))
-)
-names(fdaff_likert) <- c("Country",
-                         "1. I read only if I have to",
-                         "2. Reading is one of my favorite hobbies",
-                         "3. I find it hard to finish books")
-
-fdaff_likert3 <- likert(items=fdaff_likert[,2:4], grouping=fdaff_likert[,1])
-plot(fdaff_likert3)
-
-
-
-
-
-
-
-
-
-
-
-
-## box_auth
-## usethis::edit_r_environ()
+## Load libraries
 library(boxr)
 library(tidyverse)
+library(ggplot2)
+library(likert)
+
+#######################################
+### 1. Select item responses and
+### demographics for comparison between
+### groups.
+###   - Biological sex
+###   - Grade
+###   - School
+###   - Teacher
+###   - Treatment condition
+###   - AP exam score
+###   - etc.
+###
+### a) Load data from Team's Box
+### b) Select item responses and
+### demographics variables
+### c) Dichotomize AP scores into
+###   PASS or FAIL
+#######################################
+
+## Data file stored in Team's Box
+## Use boxr package to retrieve data
 box_auth()
-bs <- box_search("pilot4 merged", type = "file")
-
-## load dataset (first on the list)
+bs <- box_search("pilot4 merged",
+                 type = "file")
 survey <- box_read(bs)
-
-## select variables of interest
 survey %>%
   select(id,
          biological_sex_c,
@@ -57,9 +53,11 @@ survey %>%
          Class_Grade_Final,
          AP_Exam_Not_Take1) -> dat
 
-## add variable for PASS/FAIL of the AP exam
+## add variable for PASS/FAIL of AP exam
 dat %>%
-  mutate(ap_exam = ifelse(AP_Score < 4, "Fail", "Pass")) %>%
+  mutate(ap_exam = ifelse(AP_Score < 4,
+                          "Fail",
+                          "Pass")) %>%
   select(id,
          contains("t3_A"),
          treatment1,
@@ -71,108 +69,72 @@ dat %>%
 userx %>%
   select(!contains("text")) -> userx
 
-## select only treatment group
+## rename treatment variable
 userx %>%
-  filter(treatment1 == 1) -> userx_treat
+  rename(condition = treatment1) ->
+  userx
+
+## select treatment group data only
+userx %>%
+  filter(condition == 1) -> userx_treat
 
 ## select item responses only
-colnames(userx_treat)
 userx_treat %>%
   select(starts_with("t3_")) -> items
 
 
 
-##userx %>%
-##  na.omit() -> userx
+#######################################
+### 2. Data Cleaning.
+###   a) Identify responses with
+###   variance equal to 0.
+###   b) Remove flagged responses.
+###   c) Recode numeric to categorical
+###   values.
+#######################################
 
-## rename to make it easier
-userx %>%
-  rename(condition = treatment1) -> userx_treat
-
-## responses only from treatment group
-## userx_treat %>%
-##   filter(condition == 1) %>%
-##   filter(free_reduced_lunch_c != "Not applicable at my school") %>%
-##   select(starts_with("t3_")) -> items
-
-userx_treat %>%
-  filter(condition == 1) %>%
-  select(starts_with("t3_")) -> items
-
-library(careless)
+## flag items with variance == 0
 sds <- apply(items, 1, sd)
 ind_flag0 <- which(sds == 0)
-items[ind_flag0,]
-
 userx_treat %>%
   filter(condition == 1) %>%
   select(starts_with("t3_")) %>%
   filter(!row_number() %in% ind_flag0)-> items
 
-## calculate total sum
+## calculate total sum ----
+## this total sum should be reviewed to include
+## reverse-coded item 14
 total <- rowSums(items)
 
+## how much missing data?
+mis <- apply(items, 1, function(x){
+  sum(is.na(x))
+})
+table(mis)
 
+## remove missing data
+ind_mis <- which(mis == 19)
+## 16.66% missing
+items %>%
+  filter(!row_number() %in% ind_mis) -> items
 
-## ## what is the factor structure of the data?
-## library(lavaan)
-## library(psych)
-
-## fit2 <- fa(treat, 2, rotate = "promax")
-## fit2
-
-## fit3 <- fa(treat, 3, rotate = "promax")
-## fit3
-
-## fit4 <- fa(treat, 4, rotate = "promax")
-## fit4
-
-## fit5 <- fa(treat, 5, rotate = "promax")
-## fit5
-
-## fit6 <- fa(treat, 6, rotate = "promax")
-## fit6
-
-## 6-factor structure helps with visualization
-## results between groups
-
-
-## ## organize levels of factors
-## treat <- lapply(treat, function(x){
-##     factor(x, levels=c(1:5), labels=c("Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"))
-## })
-## treat <- as.data.frame(treat)
-## head(treat)
-
-## control <- lapply(control, function(x){
-##     factor(x, levels=c(1:5), labels=c("Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"))
-## })
-## control <- as.data.frame(control)
-
+## rename levels
 items <- lapply(items, function(x){
     factor(x, levels=c(1:5), labels=c("Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"))
 })
 items <- as.data.frame(items)
-## create plots
-#summary(prop)
-## there are basically 2 factors, or 6 subfactors
-facts2 <- c(rep("f2", 6),
-           rep("f1", 5),
-           rep("f2", 3),
-           "f1", "f2",
-           rep("f1", 3))
-length(facts2)
 
-facts6 <- c(rep("f1", 3),
-            rep("f5", 3),
-            "f2", "f6",
-            rep("f2", 3),
-            rep("f4", 3),
-            "f3","f4",
-            "f6",
-           rep("f3", 2))
-length(facts6)
 
+#######################################
+### 3. Plot results for treatment
+### group.
+###
+### Use 'likert' package with central
+### layout. Visualize each item
+### frequency per category.
+### Save figure as .png file.
+#######################################
+## Prepare data for visualization
 item_names <- c("01. I feel confident using the system.", ## confidence
            "02. I feel confident navigating through the assignments.",
            "03. I feel confident interpreting reports.",
@@ -193,22 +155,26 @@ item_names <- c("01. I feel confident using the system.", ## confidence
            "18. I believe the system improves testing performance.",
            "19. I believe the system promotes learning motivation.")
 
-facts_og <- colnames(items)
-reorder <- data.frame(facts_og, facts2, facts6, item_names)
-reorder %>%
-  arrange(facts6) -> reorder6
+names(items) <- item_names
 
-items <- items[,reorder6$facts_og]
+tt <- likert(items = items)
+title <- "Treatment group: 'How you feel about the AP-CAT system'"
+png("figures/userx_survey_treat_updated.png",
+    height=700, width=1200, res=120)
+plot(tt, centered=T, pt.cex=2) +
+  ggtitle(title)
+dev.off()
 
-names(items) <- as.character(reorder6$item_names)
 
-## create plot for treatment group
-library(ggplot2)
-library(likert)
-## groups <- userx_treat$condition
-## groups <- factor(groups, levels=c(1,0),
-##                  labels = c("Treatment", "Control"))
 
+#######################################
+### 4. Plot results based on approximate
+### factor structure (see
+### script in factor-structure.R)
+###
+#######################################
+
+## Treatment group
 userx_treat %>%
   filter(condition == 1) %>%
   filter(!row_number() %in% ind_flag0) %>%
@@ -308,12 +274,7 @@ plot(tt, centered=T, pt.cex=2) + ggtitle(title)
 dev.off()
 
 
-## overall for treatment group
-tt <- likert(items = items)
-title <- "Treatment group: 'How you feel about the AP-CAT system'"
-png("userx_survey_treat_updated.png", height=700, width=1200, res=120)
-plot(tt, centered=T, pt.cex=2) + ggtitle(title)
-dev.off()
+
 
 ## create plot for control group
 ## reorder the data according to the order that appears in "Prop"
