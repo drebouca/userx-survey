@@ -8,7 +8,7 @@ In order to evaluate the system features, students were assigned to either a tre
 
 ## The UX Survey
 
-Among a number of surveys, a User Experience was developed and assigned to each student asking about their satisfaction with the system navigation, usability, and reliability, and their perception of the content relevance and motivation for learning. All items were given on a 5-point scale from "Strongly Disagree" to "Strongly Agree". A summary of the items is given below:
+Among a number of surveys, a User Experience was developed and assigned to each student asking about their satisfaction with the system navigation, usability, and reliability, and their perception of the content relevance and motivation for learning. All items were given on a 5-point scale from "Strongly Disagree" to "Strongly Agree", except for two free-response items, where students were able to type in an answer. A summary of the items is given below:
 
 | Domain | \# | Item |
 |----|----------------------------------------------------------------------------|---|
@@ -32,11 +32,32 @@ Among a number of surveys, a User Experience was developed and assigned to each 
 || 18 |            "I believe the   system improves testing performance."          |
 || 19 |            "I believe the   system promotes learning motivation."          |
 
-## Q1: Is there a difference user satisfaction
+## 1. Are students who had access to all the features (treatment group) satisfatied with their use of the system?
 
-At the end of the school year the students took the AP statistics exam, and their scores were reported. Students were considered to "Pass" they scored 4 or 5, and to "Fail" otherwise. We first evaluate how students in the treatment group compared in their satisfaction using of the system by AP exam score.
+Using the `likert` package and a centered layout, we can plot response frequencies per category:
 
-Using the `likert` package and a centered layout, we can plot response frequencies per category
 <img src="figures/userx_survey_treat_updated.png" width="800">
 
+### Most revealing results
 
+- Answer keys are helpful (88\% selected "Agree" or "Strongly agree")
+- System is easy to use and fast (81\% selected "Agree" or "Strongly agree")
+- Assessments are very relevant to their curriculum (77\% selected "Agree" or "Strongly agree")
+- Attribute reports are not as helpful as expected (about 55\% of students selected "Neutral" or worse)
+- Students are either unfamiliar or dissatisfied with FAQ and scaffolding solutions (about 2/3 of students selected "Neutral" or worse)
+
+### Results Explained
+
+The most striking pattern is of the "Neutral" category, which can be interpreted as students feeling ambivalent about those specific features.
+
+For example, 55\% of the students marked "Neutral" for item _9. The FAQ is useful_ and _10. The scaffolding solutions are useful_. This indicates potentially two things: the FAQ is not particularly helpful (at the time of the survey, there were only a couple questions in the FAQ), and students did not find the step-by-step solutions useful OR they did not understand what the "scaffolding" solutions are, even if they have taken advantage of it. Such language was commonly used within the system research team, but would not be necessarily used in the classroom. Furthermore, the team wonders whether students did not use the "Scaffolding" button because they did not understand what it meant.
+
+**Actionable items**:
+
+- Improve visual aspects of Attributes Report to make it more intuitive; interview a small group of students to learn what they would like to see on the report.
+- Change button from "Scaffolding" to "Step-by-step Solutions".
+- Add more information to the FAQ based on the students' input from to the free-response questions.
+
+## 2. Is there a difference user satisfaction for students who passed the AP exam vs. those who didn't?
+
+At the end of the school year the students took the AP statistics exam, and their scores (1-5) were reported. Students were considered to "Pass" they scored 4 or 5, and to "Fail" otherwise. We now evaluate how students in the *treatment group* compared in their satisfaction of the system given their AP exam score.
