@@ -6,4 +6,4 @@ In order to evaluate the system features, students were assigned to either a tre
 
 At the end of the school year the students took the AP statistics exam, and their scores were reported. Students were considered to "Pass" they scored 4 or 5, and to "Fail" otherwise. We first evaluate how students in the treatment group compared in their satisfaction using of the system by AP exam score.
 
-<img src="/figures/userx_survey_treat_updated.png" width="700">
+<img src="figures/userx_survey_treat_updated.png" width="900">
