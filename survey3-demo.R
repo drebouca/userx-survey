@@ -1,59 +1,8 @@
 library(tidyverse)
 library(car)
-#read in survey
-survey <- read.csv("C:/Users/mcarter8/Documents/2019 time 3 survey.csv")
-nrow(survey)
 
 
-#read in master roster for 2018-19, change "Username" to "username"
-master_r <- read.csv("C:/Users/mcarter8/Documents/master-roster-2018.csv")
-
-##what do I do with this?
-x <- master_r$Username
-ind <- grep(x, pattern="^ ")
-x <- as.character(x)
-x <- gsub(pattern = "^ ", replacement = "", x = master_r$Username)
-
-levels(master_r$Username)[ind] <- x[ind]
-
-
-
-#isolate usernames and group ID's columns from 2018-19 master roster
-mr_username <- master_r %>% dplyr::select("Username","AssessmentGroupId")
-master_roster <- mr_username %>% rename(username = Username)
-
-
-
-
-
-#merge the two and see what happens? LOSE 42 ROWS BY DOING THIS, WHY?
-user_x <- merge(s_satisfaction, master_roster, by = "username")
-nrow(user_x)
-
-#identify treatment conditon
-ind.t <- NULL
-treat.g <- c(108:116)
-
-setdiff(s_satisfaction$username, master_roster$username)
-
-
-for(i in treat.g) {
-  ind.t <- c(ind.t, which(user_x$AssessmentGroupId == i))
-}
-
-#add column called "condition", those with group ID > 117 = 0 (control), < 117 = 1 (treatment)
-user_x$condition = ifelse(user_x$AssessmentGroupId >= 117,0,1)
-
-treat <- filter(user_x, condition == 1)
-mean(treat [, 4], na.rm = T)
-class(treat)
-levels(treat$satisfaction3)
-treat$satisfaction1
-test <- droplevels(treat)
-levels(test$satisfaction1)
-labels(test$satisfaction1)
-
-
+## example case
 set.seed(1)
 n=100
 fdaff_likert <- data.frame(
@@ -92,6 +41,8 @@ bs <- box_search("pilot4 merged", type = "file")
 
 ## load dataset (first on the list)
 survey <- box_read(bs)
+
+## select variables of interest
 survey %>%
   select(id,
          biological_sex_c,
@@ -102,88 +53,51 @@ survey %>%
          race_identity_c,
          expected_education_c,
          free_reduced_lunch_c,
-         contains("t3_APCAT"),
+         contains("t3_A"),
          AP_Score,
          Dropped_Class1,
          Class_Grade_Final,
          AP_Exam_Not_Take1) -> dat
 
+## add variable for PASS/FAIL of the AP exam
 dat %>%
   mutate(ap_exam = ifelse(AP_Score < 4, "Fail", "Pass")) %>%
   select(id,
-         contains("t3_APCAT"),
+         contains("t3_A"),
          treatment1,
          ap_exam,
          biological_sex_c,
          free_reduced_lunch_c) -> userx
 
-## userx %>%
-##   select(id,
-##          contains("text"),
-##          "treatment1",
-##          ap_exam) -> userx_text
-
+## exclude free response questions
 userx %>%
   select(!contains("text")) -> userx
 
-##survey <- read.csv("2019 time 3 survey.csv")
-##master_r <- read.csv("master-roster-2018.csv")
-
-
-
-
-
-#sat <- select(user_x, starts_with("satisfaction"))
-#sat <- lapply(sat, function(x){
-#    recode(x, from=c("Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"), 1:5)
-#})
-#sat <- as.data.frame(sat)
-
-#user_x <- data.frame(username=user_x$username,
-#                     sat,
-#                     AssessmentGroupId = user_x$AssessmentGroupId,
-#                     condition=user_x$condition)
-
-## select only treatment responses
-## reverse code 6th to last items
+## select only treatment group
 userx %>%
+  filter(treatment1 == 1) -> userx_treat
+
+## select item responses only
+colnames(userx_treat)
+userx_treat %>%
   select(starts_with("t3_")) -> items
-colnames(userx)
-## items <- psych::reverse.code(c(rep(1,13), -1, rep(1, 5)),
-##                             items,
-##                             mini = 1,
-##                             maxi = 5)
-## items %>%
-##   as.data.frame() %>%
-##   bind_cols(condition = userx$treatment1,
-##             id = userx$id) %>%
-##   dplyr::select(id,
-##          starts_with("t3_"),
-##          condition) %>%
-##   na.omit() -> userx
+
+
+
+##userx %>%
+##  na.omit() -> userx
+
+## rename to make it easier
 userx %>%
-  na.omit() -> userx
-
-
-## separate datasets for treatment and control conditions
-## userx %>%
-##   dplyr::filter(condition == 1)%>%
-##   select(-id, -condition) -> treat
-
-## userx %>%
-##   dplyr::filter(condition == 0) %>%
-##   select(-id, -condition) -> control
-
-userx %>%
-  rename(condition = treatment1) -> userx
+  rename(condition = treatment1) -> userx_treat
 
 ## responses only from treatment group
-## userx %>%
+## userx_treat %>%
 ##   filter(condition == 1) %>%
 ##   filter(free_reduced_lunch_c != "Not applicable at my school") %>%
 ##   select(starts_with("t3_")) -> items
 
-userx %>%
+userx_treat %>%
   filter(condition == 1) %>%
   select(starts_with("t3_")) -> items
 
@@ -192,7 +106,7 @@ sds <- apply(items, 1, sd)
 ind_flag0 <- which(sds == 0)
 items[ind_flag0,]
 
-userx %>%
+userx_treat %>%
   filter(condition == 1) %>%
   select(starts_with("t3_")) %>%
   filter(!row_number() %in% ind_flag0)-> items
@@ -293,11 +207,11 @@ names(items) <- as.character(reorder6$item_names)
 ## create plot for treatment group
 library(ggplot2)
 library(likert)
-## groups <- userx$condition
+## groups <- userx_treat$condition
 ## groups <- factor(groups, levels=c(1,0),
 ##                  labels = c("Treatment", "Control"))
 
-userx %>%
+userx_treat %>%
   filter(condition == 1) %>%
   filter(!row_number() %in% ind_flag0) %>%
   select(ap_exam) %>% unlist() %>%
@@ -309,13 +223,13 @@ pf <- data.frame(groups, total)
 t.test(pf$total[pf$groups == "Pass"],
        pf$total[pf$groups == "Fail"])
 
-## userx %>%
+## userx_treat %>%
 ##   filter(condition == 1) %>%
 ##   filter(free_reduced_lunch_c != "Not applicable at my school") %>%
 ##   select(free_reduced_lunch_c) %>% unlist() %>%
 ##   factor() -> groups
 
-## userx %>%
+## userx_treat %>%
 ##   filter(condition == 1) %>%
 ##   select(biological_sex_c) %>% unlist() %>%
 ##   factor() -> groups
