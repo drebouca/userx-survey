@@ -2,16 +2,16 @@
 
 A user experience survey was developed and applied to students using the assessment system in the 2018-19 school year. A total of 423 students were surveyed from statistics classes throughout the school year. 
 
-## Treatment vs. Control Groups
+## System Features
 
-In order to evaluate the system features, students were assigned to either a treatment or a control group. The treatment group had access to all system features: final score for each assessment, scaffolding (step-by-step solutions), assessment reports with answer keys, and attribute reports with "Novice", "Intermediary", and "Expert" assigned to each skill. The control group only had access to their scores on the assessments.
+In order to evaluate the system features, students were assigned to either a _treatment_ or a _control_ group. The treatment group had access to all system features: final score for each assessment, scaffolding (step-by-step solutions), assessment reports with answer keys, and attribute reports with "Novice", "Intermediary", and "Expert" assigned to each skill. The control group only had access to their scores on the assessments.
 
 ## The UX Survey
 
 Among a number of surveys, a User Experience was developed and assigned to each student asking about their satisfaction with the system navigation, usability, and reliability, and their perception of the content relevance and motivation for learning. All items were given on a 5-point scale from "Strongly Disagree" to "Strongly Agree", except for two free-response items, where students were able to type in an answer. A summary of the items is given below:
 
 | Domain | \# | Item |
-|----|----------------------------------------------------------------------------|---|
+|:---|---:|:--|
 |*System Usability* |  1  | "I feel confident using the   system."                                     |
 | | 2  | "I feel confident navigating through the assignments."                     |
 | | 3  | "I feel confident interpreting reports."                                   |
@@ -32,19 +32,21 @@ Among a number of surveys, a User Experience was developed and assigned to each 
 || 18 |            "I believe the   system improves testing performance."          |
 || 19 |            "I believe the   system promotes learning motivation."          |
 
-## 1. Are students who had access to all the features (treatment group) satisfatied with their use of the system?
+## 
+
+## 1. Are students in the treatment group satisfied with the system?
 
 Using the `likert` package and a centered layout, we can plot response frequencies per category:
 
 <img src="figures/userx_survey_treat_updated.png" width="800">
 
-### Most revealing results
+### Main results
 
-- Answer keys are helpful (88\% selected "Agree" or "Strongly agree")
-- System is easy to use and fast (81\% selected "Agree" or "Strongly agree")
-- Assessments are very relevant to their curriculum (77\% selected "Agree" or "Strongly agree")
-- Attribute reports are not as helpful as expected (about 55\% of students selected "Neutral" or worse)
-- Students are either unfamiliar or dissatisfied with FAQ and scaffolding solutions (about 2/3 of students selected "Neutral" or worse)
+- _Answer keys_ are helpful (88\% selected "Agree" or "Strongly agree")
+- System is _easy to use_ and _fast_ (81\% selected "Agree" or "Strongly agree")
+- Assessments are _very relevant_ to their curriculum (77\% selected "Agree" or "Strongly agree")
+- _Attribute reports_ are not as helpful as expected (about 55\% of students selected "Neutral" or worse)
+- Students are either unfamiliar or dissatisfied with _FAQ_ and _scaffolding_ solutions (about 2/3 of students selected "Neutral" or worse)
 
 ### Results Explained
 
@@ -54,10 +56,10 @@ For example, 55\% of the students marked "Neutral" for item _9. The FAQ is usefu
 
 **Actionable items**:
 
-- Improve visual aspects of Attributes Report to make it more intuitive; interview a small group of students to learn what they would like to see on the report.
-- Change button from "Scaffolding" to "Step-by-step Solutions".
+- Improve visual aspects of Attributes Report; interview a small group of students to learn what they would like to see on the report;
+- Change button from "Scaffolding" to "Step-by-step Solutions";
 - Add more information to the FAQ based on the students' input from to the free-response questions.
 
-## 2. Is there a difference user satisfaction for students who passed the AP exam vs. those who didn't?
+## 2. Is there a difference in satisfaction for students who passed the AP exam vs. those who didn't?
 
 At the end of the school year the students took the AP statistics exam, and their scores (1-5) were reported. Students were considered to "Pass" they scored 4 or 5, and to "Fail" otherwise. We now evaluate how students in the *treatment group* compared in their satisfaction of the system given their AP exam score.

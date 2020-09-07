@@ -32,8 +32,6 @@ plot(fdaff_likert3)
 
 ## box_auth
 ## usethis::edit_r_environ()
-## 4j0660orfjkkwg9aqh6cp84h92asmcim
-## cguGlXDMM3jgRdaI4FzHFHLc5UFAaOIO
 library(boxr)
 library(tidyverse)
 box_auth()
