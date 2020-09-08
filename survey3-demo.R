@@ -1,9 +1,9 @@
-##################################################################
+#################################################################
 ### Script to select data from UX survey and generate figures to
 ### visualize results.
 ###
 ### by Dani Reboucas
-##################################################################
+#################################################################
 
 ## Load libraries
 library(boxr)
@@ -11,7 +11,7 @@ library(tidyverse)
 library(ggplot2)
 library(likert)
 
-##################################################################
+#################################################################
 ### 1. Select item responses and demographics for comparison
 ### between groups.
 ###   - Biological sex
@@ -23,17 +23,14 @@ library(likert)
 ###   - etc.
 ###
 ### a) Load data from Team's Box
-### b) Select item responses and
-### demographics variables
-### c) Dichotomize AP scores into
-###   PASS or FAIL
-#######################################
+### b) Select item responses and demographics variables
+### c) Dichotomize AP scores into PASS or FAIL
+#################################################################
 
 ## Data file stored in Team's Box
 ## Use boxr package to retrieve data
 box_auth()
-bs <- box_search("pilot4 merged",
-                 type = "file")
+bs <- box_search("pilot4 merged", type = "file")
 survey <- box_read(bs)
 survey %>%
   select(id,
@@ -53,9 +50,7 @@ survey %>%
 
 ## add variable for PASS/FAIL of AP exam
 dat %>%
-  mutate(ap_exam = ifelse(AP_Score < 4,
-                          "Fail",
-                          "Pass")) %>%
+  mutate(ap_exam = ifelse(AP_Score < 4, "Fail", "Pass")) %>%
   select(id,
          contains("t3_A"),
          treatment1,
@@ -69,8 +64,7 @@ userx %>%
 
 ## rename treatment variable
 userx %>%
-  rename(condition = treatment1) ->
-  userx
+  rename(condition = treatment1) -> userx
 
 ## select treatment group data only
 userx %>%
@@ -82,45 +76,59 @@ userx_treat %>%
 
 
 
-#######################################
+#################################################################
 ### 2. Data Cleaning.
-###   a) Identify responses with
-###   variance equal to 0.
-###   b) Remove flagged responses.
-###   c) Recode numeric to categorical
-###   values.
-#######################################
+###   a) Identify and remove responses with variance equal to 0.
+###   b) Calculate sum scores overall and per factor.
+###   c) Recode numeric to categorical values.
+###
+#################################################################
 
-## flag items with variance == 0
+## flag and remove items with variance == 0
 sds <- apply(items, 1, sd)
 ind_flag0 <- which(sds == 0)
 userx_treat %>%
   filter(condition == 1) %>%
   select(starts_with("t3_")) %>%
-  filter(!row_number() %in% ind_flag0)-> items
+  filter(!row_number() %in% ind_flag0) -> items
 
 ## calculate total sum ----
-## this total sum includes reverse-coded
-## item 14
-test <- reverse.code(keys =
-                       c(rep(1, 13),
-                         -1,
-                         rep(1, 5)),
-                     items = items,
-                     mini = 1,
-                     max = 5)
+## this total sum includes reverse-coded item 14
+test <- reverse.code(keys = c(rep(1, 13), -1, rep(1, 5)),
+                     items = items, mini = 1, max = 5)
 total <- rowSums(test)
 
 ## total score per factor:
-## --- system satisfaction
-## --- learning
+## --- system satisfaction (f2)
+## --- learning (f1)
+facts_og <- colnames(items)
+facts2 <- c(rep("f2", 6),
+           rep("f1", 5),
+           rep("f2", 3),
+           "f1", "f2",
+           rep("f1", 3))
+## check point: should have same length as # columns in 'items'
+length(facts2)
 
+## data frame to reorder columns by factor
+reorder <- data.frame(facts_og, facts2, item_names)
+reorder %>%
+  arrange(facts2) -> reorder2
+
+## total sum per factor
+items %>%
+  select(reorder2$facts_og[reorder2$facts2 == "f1"]) %>%
+  rowSums() -> total_system
+items %>%
+  select(reorder2$facts_og[reorder2$facts2 == "f2"]) %>%
+  rowSums() -> total_learn
 
 ## how much missing data?
 mis <- apply(items, 1, function(x){
   sum(is.na(x))
 })
 table(mis)
+## data missing either completely (19) or not at all (0)
 
 ## remove missing data
 ind_mis <- which(mis == 19)
@@ -128,34 +136,37 @@ ind_mis <- which(mis == 19)
 items %>%
   filter(!row_number() %in% ind_mis) -> items
 
-## rename levels
+## recode values from numerical to categorical
 items <- lapply(items, function(x){
-    factor(x, levels=c(1:5), labels=c("Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"))
+  factor(x, levels=c(1:5), labels=c("Strongly Disagree",
+                                    "Disagree",
+                                    "Neutral",
+                                    "Agree",
+                                    "Strongly Agree"))
 })
 items <- as.data.frame(items)
 
 
-#######################################
-### 3. Plot results for treatment
-### group.
+#################################################################
+### 3. Plot results for treatment group.
 ###
-### Use 'likert' package with central
-### layout. Visualize each item
+### Use 'likert' package with central layout. Visualize each item
 ### frequency per category.
-### Save figure as .png file.
-#######################################
+### Save figures as .png file.
+###
+#################################################################
 ## Prepare data for visualization
-item_names <- c("01. I feel confident using the system.", ## confidence
+item_names <- c("01. I feel confident using the system.",
            "02. I feel confident navigating through the assignments.",
            "03. I feel confident interpreting reports.",
-           "04. I am satisfied with using the system as an assisted learning tool.", # satisfaction
+           "04. I am satisfied with using the system as an assisted learning tool.",
            "05. I am satisfied with the post-assignments reports from the system.",
            "06. I am satisfied with the process of taking assignments on the system.",
            "07. I am satisfied with scaffolding solutions.",
-           "08. The assignments are very relevant to our curriculum.", # relevance
-           "09. The FAQ is useful.", # helpfulness
-           "10. The scaffolding solutions are useful.",  # helpfulness
-           "11. The attribute reports are useful.",  # helpfulness
+           "08. The assignments are very relevant to our curriculum.",
+           "09. The FAQ is useful.",
+           "10. The scaffolding solutions are useful.",
+           "11. The attribute reports are useful.",
            "12. It is helpful to see the answer key after the assignment.",
            "13. I am satisfied with the speed of the system.",
            "14. I frequently run into technical problems in the system (R).",
@@ -177,12 +188,11 @@ dev.off()
 
 
 
-#######################################
-### 4. Plot results based on approximate
-### factor structure (see
+#################################################################
+### 4. Plot results based on approximate factor structure (see
 ### script in factor-structure.R)
 ###
-#######################################
+#################################################################
 
 ## Treatment group
 userx_treat %>%
@@ -191,20 +201,26 @@ userx_treat %>%
   select(ap_exam) %>% unlist() %>%
   factor() -> groups
 
-## 2. Is there a difference in satisfaction between pass and fail groups?
-## answer: probably (p-value=.02)
+## 2. Is there a difference in satisfaction between pass and fail
+## groups?
+## answer: probably, but there is too much variability in the
+## estimate (p-value=.03)
 pf <- data.frame(groups, total)
 t.test(pf$total[pf$groups == "Pass"],
        pf$total[pf$groups == "Fail"])
 
-## two possible factor structures
-facts2 <- c(rep("f2", 6),
-           rep("f1", 5),
-           rep("f2", 3),
-           "f1", "f2",
-           rep("f1", 3))
-length(facts2)
+## test per factor
+pf_learn <- data.frame(groups, total_learn)
+t.test(pf_learn$total[pf_learn$groups == "Pass"],
+       pf_learn$total[pf_learn$groups == "Fail"])
+## answer: p < .01
+pf_system <- data.frame(groups, total_system)
+t.test(pf_system$total[pf_system$groups == "Pass"],
+       pf_system$total[pf_system$groups == "Fail"])
+## answer: p > .05
 
+## split items in 6 factors (based on factor-structure.R)
+## easier visualization per Pass/Fail groups
 facts6 <- c(rep("f1", 3),
             rep("f5", 3),
             "f2", "f6",
@@ -215,7 +231,7 @@ facts6 <- c(rep("f1", 3),
            rep("f3", 2))
 length(facts6)
 
-facts_og <- colnames(items)
+##
 reorder <- data.frame(facts_og, facts2, facts6, item_names)
 reorder %>%
   arrange(facts6) -> reorder6
