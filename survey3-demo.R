@@ -123,14 +123,12 @@ items %>%
   select(reorder2$facts_og[reorder2$facts2 == "f2"]) %>%
   rowSums() -> total_learn
 
-## how much missing data?
+## remove missing data
 mis <- apply(items, 1, function(x){
   sum(is.na(x))
 })
 table(mis)
 ## data missing either completely (19) or not at all (0)
-
-## remove missing data
 ind_mis <- which(mis == 19)
 ## 16.66% missing
 items %>%

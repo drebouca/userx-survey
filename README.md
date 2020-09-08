@@ -2,6 +2,8 @@
 
 A user experience survey was developed and applied to students using the assessment system in the 2018-19 school year. A total of 423 students were surveyed from statistics classes throughout the school year. 
 
+For analyses script, please see (survey3-demo.R)[survey3-demo.R].
+
 ## System Features
 
 In order to evaluate the system features, students were assigned to either a _treatment_ or a _control_ group. The treatment group had access to all system features: final score for each assessment, scaffolding (step-by-step solutions), assessment reports with answer keys, and attribute reports with "Novice", "Intermediary", and "Expert" assigned to each skill. The control group only had access to their scores on the assessments.
@@ -36,7 +38,7 @@ Among a number of surveys, a User Experience was developed and assigned to each 
 
 A total of 235 students were given the userx survey. Of the total, 36 students did not answer the survey, and 19 were removed due to unreliable responses (long string of the same answer category). After removal of the data, a sample of $N=180$ students were used for these analyses. 
 
-Finally, the data was changed from numerical (1,2,3,4,5) to categorical values ("Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"). One reverse-coded item was present, but kept at the original scale for the purposes data visualization.
+Finally, the data was changed from numerical (1,2,3,4,5) to categorical values ("Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"). One reverse-coded item was present, but kept at the original scale for the purposes of data visualization.
 
 
 
@@ -68,4 +70,26 @@ For example, 55\% of the students marked "Neutral" for item _9. The FAQ is usefu
 
 ## 2. Is there a difference in satisfaction for students who passed the AP exam vs. those who didn't?
 
-At the end of the school year the students took the AP statistics exam, and their scores (1-5) were reported. Students were considered to "Pass" they scored 4 or 5, and to "Fail" otherwise. We now evaluate how students in the *treatment group* compared in their satisfaction of the system given their AP exam score.
+At the end of the school year the students took the AP statistics exam, and their scores (1-5) were reported. Students were considered to "Pass" they scored 4 or 5, and to "Fail" otherwise. We now evaluate how students in the *treatment group* compared in their satisfaction given AP exam scores.
+
+Below we see two figures regarding their satisfaction with the system and their learning process.
+
+### Factor 1: Satisfaction with the System
+
+<img src="figures/userx_pf_satisfaction.png"
+    alt="Treatment group: Satisfaction"
+    width="800">
+
+Students in the "Fail" group do not seem to be as satisfied as the "Pass" group when it comes to using the system as an assisted learning tool (#4) and with the process of taking assessments in the system (#6), since 28\% marked "Disagree" or "Strongly Disagree" for those items, compared to only 14\% and 8\%, respectively, for students in the "Pass" group. This indicates that students who feel like they benefit from the system are more likely to perform well on the AP exam.
+
+Although the statistical test comparing total scores on the System Satisfaction factor across Pass/Fail groups did not show significant difference between the two groups (p > .05), the estimate had high variability (due to a relatively small sample size) and system satisfaction could still be a predictor of good performance on the AP exam. This hypothesis requires further investigation. 
+
+### Factor 2: Learning Motivation
+
+<img src="figures/userx_pf_learning.png"
+    alt="Treatment group: Learning"
+    width="800">
+
+When it comes to learning motivation (#19), students in the Fail group selected "Disagree" or "Strongly Disagree" 40\% of the time compared to 22\% in the Pass group. Thus many students in the Fail group did not feel the system promoted learning motivation as much as we had hoped. 
+
+Along with previous results from the first research question, improving the step-by-step solutions and attribute reports may help increase students motivation and potentially their performance on the AP exam.
