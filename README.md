@@ -2,7 +2,7 @@
 
 A user experience survey was developed and applied to students using the assessment system in the 2018-19 school year. A total of 423 students were surveyed from statistics classes throughout the school year. 
 
-For analyses script, please see (survey3-demo.R)[survey3-demo.R].
+For analyses script, please see (survey3-demo.R)[/survey3-demo.R].
 
 ## System Features
 
@@ -92,4 +92,8 @@ Although the statistical test comparing total scores on the System Satisfaction 
 
 When it comes to learning motivation (#19), students in the Fail group selected "Disagree" or "Strongly Disagree" 40\% of the time compared to 22\% in the Pass group. Thus many students in the Fail group did not feel the system promoted learning motivation as much as we had hoped. 
 
-Along with previous results from the first research question, improving the step-by-step solutions and attribute reports may help increase students motivation and potentially their performance on the AP exam.
+## Summary
+
+Students who had access to the system features such as step-by-step solutions and attribute reports were _more likely to pass the AP exam_ if they felt the learning system promoted motivation, and if they were satisfied using the system.
+
+From the first question, the research team learned about a few important areas for improvement. Thus by making the _step-by-step solutions_ more accessible and increasing interpretability and visual aspects of the _attribute reports_ the team hopes to increase students' motivation and satisfaction with the system, which will potentially lead to better performance on the AP exam.
