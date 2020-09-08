@@ -1,10 +1,9 @@
-#######################################
-### Script to select data from UX
-### survey and generate figures to
+##################################################################
+### Script to select data from UX survey and generate figures to
 ### visualize results.
 ###
 ### by Dani Reboucas
-#######################################
+##################################################################
 
 ## Load libraries
 library(boxr)
@@ -12,10 +11,9 @@ library(tidyverse)
 library(ggplot2)
 library(likert)
 
-#######################################
-### 1. Select item responses and
-### demographics for comparison between
-### groups.
+##################################################################
+### 1. Select item responses and demographics for comparison
+### between groups.
 ###   - Biological sex
 ###   - Grade
 ###   - School
@@ -102,9 +100,21 @@ userx_treat %>%
   filter(!row_number() %in% ind_flag0)-> items
 
 ## calculate total sum ----
-## this total sum should be reviewed to include
-## reverse-coded item 14
-total <- rowSums(items)
+## this total sum includes reverse-coded
+## item 14
+test <- reverse.code(keys =
+                       c(rep(1, 13),
+                         -1,
+                         rep(1, 5)),
+                     items = items,
+                     mini = 1,
+                     max = 5)
+total <- rowSums(test)
+
+## total score per factor:
+## --- system satisfaction
+## --- learning
+
 
 ## how much missing data?
 mis <- apply(items, 1, function(x){
@@ -181,11 +191,38 @@ userx_treat %>%
   select(ap_exam) %>% unlist() %>%
   factor() -> groups
 
-## 1. Is there a difference in satisfaction between pass and fail groups?
+## 2. Is there a difference in satisfaction between pass and fail groups?
 ## answer: probably (p-value=.02)
 pf <- data.frame(groups, total)
 t.test(pf$total[pf$groups == "Pass"],
        pf$total[pf$groups == "Fail"])
+
+## two possible factor structures
+facts2 <- c(rep("f2", 6),
+           rep("f1", 5),
+           rep("f2", 3),
+           "f1", "f2",
+           rep("f1", 3))
+length(facts2)
+
+facts6 <- c(rep("f1", 3),
+            rep("f5", 3),
+            "f2", "f6",
+            rep("f2", 3),
+            rep("f4", 3),
+            "f3","f4",
+            "f6",
+           rep("f3", 2))
+length(facts6)
+
+facts_og <- colnames(items)
+reorder <- data.frame(facts_og, facts2, facts6, item_names)
+reorder %>%
+  arrange(facts6) -> reorder6
+
+items <- items[,reorder6$facts_og]
+
+names(items) <- as.character(reorder6$item_names)
 
 ## userx_treat %>%
 ##   filter(condition == 1) %>%
@@ -227,15 +264,15 @@ tt <- likert(items=items_f1[,-4],
              grouping = items_f1[,4])
 ## prop <- likert(summary = tt$results)
 title <- "Navigation"
-png("userx_pf_navigation.png", height=700, width=1000, res=120)
-plot(tt, centered=F, pt.cex=2) + ggtitle(title)
+png("figures/userx_pf_navigation.png", height=700, width=1000, res=120)
+plot(tt, centered=T, pt.cex=2) + ggtitle(title)
 dev.off()
 
 tt <- likert(items=items_f2[,-5],
              grouping = items_f2[,5])
 ## prop <- likert(summary = tt$results)
 title <- "Usefulness"
-png("userx_pf_usefulness.png", height=700, width=1000, res=120)
+png("figures/userx_pf_usefulness.png", height=700, width=1000, res=120)
 plot(tt, centered=T, pt.cex=2) + ggtitle(title)
 ## dev.off()
 
@@ -243,7 +280,7 @@ tt <- likert(items=items_f3[,-4],
              grouping = items_f3[,4])
 ## prop <- likert(summary = tt$results)
 title <- "Learning"
-png("userx_pf_learning.png", height=700, width=1000, res=120)
+png("figures/userx_pf_learning.png", height=700, width=1000, res=120)
 plot(tt, centered=T, pt.cex=2) + ggtitle(title)
 dev.off()
 
@@ -251,7 +288,7 @@ tt <- likert(items=items_f4[,-5],
              grouping = items_f4[,5])
 ## prop <- likert(summary = tt$results)
 title <- "Usability"
-png("userx_pf_usability.png", height=700, width=1000, res=120)
+png("figures/userx_pf_usability.png", height=700, width=1000, res=120)
 plot(tt, centered=T, pt.cex=2) + ggtitle(title)
 dev.off()
 
@@ -260,7 +297,7 @@ tt <- likert(items=items_f5[,-4],
              grouping = items_f5[,4])
 ## prop <- likert(summary = tt$results)
 title <- "Satisfaction"
-png("userx_pf_satisfaction.png", height=700, width=1000, res=120)
+png("figures/userx_pf_satisfaction.png", height=700, width=1000, res=120)
 plot(tt, centered=T, pt.cex=2) + ggtitle(title)
 dev.off()
 
@@ -269,7 +306,7 @@ tt <- likert(items=items_f6[,-3],
              grouping = items_f6[,3])
 ## prop <- likert(summary = tt$results)
 title <- "Relevance"
-png("userx_pf_relevance.png", height=700, width=1000, res=120)
+png("figures/userx_pf_relevance.png", height=700, width=1000, res=120)
 plot(tt, centered=T, pt.cex=2) + ggtitle(title)
 dev.off()
 
